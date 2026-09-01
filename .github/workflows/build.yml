@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+  pull-requests: read
+
 jobs:
   golang:
     runs-on: ubuntu-latest
