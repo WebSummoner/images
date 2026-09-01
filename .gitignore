@@ -11,6 +11,9 @@ selenium/barrier/barrier
 
 # locally built tool and nested-module binaries
 docs-site/dist/
+
+# cross-compiled release binaries
+dist/
 images-tool
 selenium/base/fileserver/fileserver
 selenium/base/xseld/xseld
