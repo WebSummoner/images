@@ -1,20 +1,22 @@
 name: test
 
 on:
+  push:
+    branches: [master]
   pull_request:
 
 jobs:
   golang:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Setup Golang
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v7
         with:
-          go-version: ~1.22.2
+          go-version: ~1.27.0
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v6
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -27,6 +29,9 @@ jobs:
       - name: Build
         run: ci/build.sh
 
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v7
         with:
+          files: coverage.txt
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: WebSummoner/images
           flags: go

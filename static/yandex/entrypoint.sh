@@ -55,10 +55,17 @@ FILESERVER_PID=$!
 DISPLAY="$DISPLAY" /usr/bin/xseld &
 XSELD_PID=$!
 
-mkdir -p ~/pulse/.config/pulse
-echo -n 'gIvST5iz2S0J1+JlXC1lD3HWvg61vDTV1xbmiGxZnjB6E3psXsjWUVQS4SRrch6rygQgtpw7qmghDFTaekt8qWiCjGvB0LNzQbvhfs1SFYDMakmIXuoqYoWFqTJ+GOXYByxpgCMylMKwpOoANEDePUCj36nwGaJNTNSjL8WBv+Bf3rJXqWnJ/43a0hUhmBBt28Dhiz6Yqowa83Y4iDRNJbxih6rB1vRNDKqRr/J9XJV+dOlM0dI+K6Vf5Ag+2LGZ3rc5sPVqgHgKK0mcNcsn+yCmO+XLQHD1K+QgL8RITs7nNeF1ikYPVgEYnc0CGzHTMvFR7JLgwL2gTXulCdwPbg=='| base64 -d>~/pulse/.config/pulse/cookie
-HOME=$HOME/pulse pulseaudio --start --exit-idle-time=-1
-HOME=$HOME/pulse pactl load-module module-native-protocol-tcp
+# pulse must share HOME with the browser or in-browser audio never reaches it
+mkdir -p ~/.config/pulse
+echo -n 'gIvST5iz2S0J1+JlXC1lD3HWvg61vDTV1xbmiGxZnjB6E3psXsjWUVQS4SRrch6rygQgtpw7qmghDFTaekt8qWiCjGvB0LNzQbvhfs1SFYDMakmIXuoqYoWFqTJ+GOXYByxpgCMylMKwpOoANEDePUCj36nwGaJNTNSjL8WBv+Bf3rJXqWnJ/43a0hUhmBBt28Dhiz6Yqowa83Y4iDRNJbxih6rB1vRNDKqRr/J9XJV+dOlM0dI+K6Vf5Ag+2LGZ3rc5sPVqgHgKK0mcNcsn+yCmO+XLQHD1K+QgL8RITs7nNeF1ikYPVgEYnc0CGzHTMvFR7JLgwL2gTXulCdwPbg=='| base64 -d>~/.config/pulse/cookie
+pulseaudio --start --exit-idle-time=-1
+# wait for the daemon, then expose it over TCP for the video recorder
+i=0
+until pactl load-module module-native-protocol-tcp >/dev/null 2>&1; do
+    i=$((i+1)); [ $i -ge 50 ] && break
+    sleep 0.2
+done
+pactl unload-module module-suspend-on-idle >/dev/null 2>&1 || true
 PULSE_PID=$(ps --no-headers -C pulseaudio -o pid | sed -r 's/( )+//g')
 
 /usr/bin/xvfb-run -l -n "$DISPLAY_NUM" -s "-ac -screen 0 $SCREEN_RESOLUTION -noreset -listen tcp" /usr/bin/fluxbox -display "$DISPLAY" -log /dev/null  2>/dev/null &
@@ -75,7 +82,7 @@ until [ $retcode -eq 0 ]; do
 done
 
 if [ "$ENABLE_VNC" == "true" ]; then
-    x11vnc -display "$DISPLAY" -passwd selenoid -shared -forever -loop500 -rfbport 5900 -rfbportv6 5900 -logfile /dev/null &
+    x11vnc -display "$DISPLAY" -passwd websummoner -shared -forever -loop500 -rfbport 5900 -rfbportv6 5900 -logfile /dev/null &
     X11VNC_PID=$!
 fi
 

@@ -1,6 +1,6 @@
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=26.04
 
-FROM golang:1.22-bullseye as go
+FROM golang:1.27-bookworm AS go
 
 COPY xseld /xseld
 
@@ -9,14 +9,14 @@ COPY fileserver /fileserver
 RUN \
     if [ `uname -m` = "aarch64" ]; then ARCH="arm64"; else ARCH="amd64"; fi && \
     apt-get update && \
-    apt-get install -y upx-ucl libx11-dev && \
+    apt-get install -y libx11-dev && (apt-get install -y upx-ucl || apt-get install -y upx || echo 'upx unavailable, skipping compression') && \
     cd /xseld && \
     GOOS=linux GOARCH=$ARCH go build -ldflags="-s -w" && \
-    upx /xseld/xseld && \
+    (command -v upx >/dev/null 2>&1 && upx /xseld/xseld || echo 'skipping upx /xseld/xseld') && \
     cd /fileserver && \
     go test -race && \
     GOOS=linux GOARCH=$ARCH go build -ldflags="-s -w" && \
-    upx /fileserver/fileserver
+    (command -v upx >/dev/null 2>&1 && upx /fileserver/fileserver || echo 'skipping upx /fileserver/fileserver')
 
 # For M1 Chromium images it's required to override a version to 18.04 as latest Ubuntu distributions don't ship updates
 FROM ubuntu:$UBUNTU_VERSION
@@ -42,7 +42,10 @@ RUN \
     fonts-thai-tlwg-ttf \
     fonts-ipafont-mincho \
     fonts-sahadeva \
+    fonts-indic \
     fonts-noto-unhinted \
+    fonts-noto-core \
+    fonts-noto-cjk \
     fonts-noto-color-emoji \
     jq \
     libfontconfig1 \
@@ -76,9 +79,14 @@ RUN \
     apt-get clean && \
     rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
 
+# no session bus in containers, stops Chromium dbus errors
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+
 COPY fluxbox /usr/share/fluxbox/styles/
 COPY --chown=selenium:root fluxbox /home/selenium/.fluxbox/
-COPY aerokube.png /usr/share/images/fluxbox/
+# Brave runs as root, give root the same fluxbox config
+COPY fluxbox /root/.fluxbox/
+COPY websummoner.png /usr/share/images/fluxbox/
 
 COPY --from=go /fileserver/fileserver /usr/bin/
 COPY --from=go /xseld/xseld /usr/bin/

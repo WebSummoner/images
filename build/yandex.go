@@ -43,7 +43,7 @@ func (yb *YandexBrowser) Build() error {
 	}
 
 	pkgTagVersion := extractVersion(pkgVersion)
-	devImageTag := fmt.Sprintf("selenoid/dev_yandex:%s", pkgTagVersion)
+	devImageTag := fmt.Sprintf("websummoner/dev_yandex:%s", pkgTagVersion)
 	devImageRequirements := Requirements{NoCache: yb.NoCache, Tags: []string{devImageTag}}
 	devImage, err := NewImage(srcDir, devDestDir, devImageRequirements)
 	if err != nil {

@@ -45,7 +45,7 @@ func (c *Chromium) Build() error {
 		}
 	}
 
-	devImageTag := fmt.Sprintf("selenoid/dev_chromium:%s", pkgTagVersion)
+	devImageTag := fmt.Sprintf("websummoner/dev_chromium:%s", pkgTagVersion)
 	devImageRequirements := Requirements{NoCache: c.NoCache, Tags: []string{devImageTag}}
 	devImage, err := NewImage(srcDir, devDestDir, devImageRequirements)
 	if err != nil {

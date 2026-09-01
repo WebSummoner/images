@@ -1,24 +1,34 @@
 # Browser Images
-[![Build Status](https://github.com/aerokube/images/workflows/build/badge.svg)](https://github.com/aerokube/images/actions?query=workflow%3Abuild)
-[![Release](https://img.shields.io/github/release/aerokube/images.svg)](https://github.com/aerokube/images/releases/latest)
+[![Build](https://github.com/WebSummoner/images/actions/workflows/build.yml/badge.svg)](https://github.com/WebSummoner/images/actions/workflows/build.yml)
+[![Lint](https://github.com/WebSummoner/images/actions/workflows/lint.yml/badge.svg)](https://github.com/WebSummoner/images/actions/workflows/lint.yml)
+[![codecov](https://codecov.io/gh/websummoner/images/graph/badge.svg)](https://codecov.io/gh/websummoner/images)
+[![Release](https://img.shields.io/github/v/release/WebSummoner/images)](https://github.com/WebSummoner/images/releases/latest)
 
-**UNMAINTAINED**. Consider https://aerokube.com/moon/latest as alternative.
+**Actively maintained by [RIADVICE](https://riadvice.com) under the WebSummoner project** — browser images kept up to date with current browser releases.
 
-This repository contains [Docker](http://docker.com/) build files to be used for [Selenoid](http://github.com/aerokube/selenoid) and [Moon](http://github.com/aerokube/moon) projects. You can find prebuilt images [here](https://hub.docker.com/u/selenoid/).
+This repository contains [Docker](http://docker.com/) build files to be used for [WebSummoner](http://github.com/WebSummoner/websummoner). You can find prebuilt images [here](https://hub.docker.com/u/websummoner/).
 
 ## Download Statistics
 
-### Firefox: [![Firefox Docker Pulls](https://img.shields.io/docker/pulls/selenoid/firefox.svg)](https://hub.docker.com/r/selenoid/firefox)
-
-### Chrome: [![Chrome Docker Pulls](https://img.shields.io/docker/pulls/selenoid/chrome.svg)](https://hub.docker.com/r/selenoid/chrome)
-
-### Opera: [![Opera Docker Pulls](https://img.shields.io/docker/pulls/selenoid/opera.svg)](https://hub.docker.com/r/selenoid/opera)
-
-### Android: [![Android Docker Pulls](https://img.shields.io/docker/pulls/selenoid/android.svg)](https://hub.docker.com/r/selenoid/android)
+| | Browser | Image | Pulls |
+| --- | --- | --- | --- |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome.svg" width="24" alt="Chrome"> | Chrome | `websummoner/chrome` | [![Chrome](https://img.shields.io/docker/pulls/websummoner/chrome)](https://hub.docker.com/r/websummoner/chrome) |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox.svg" width="24" alt="Firefox"> | Firefox | `websummoner/firefox` | [![Firefox](https://img.shields.io/docker/pulls/websummoner/firefox)](https://hub.docker.com/r/websummoner/firefox) |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge.svg" width="24" alt="Edge"> | Edge | `websummoner/edge` | [![Edge](https://img.shields.io/docker/pulls/websummoner/edge)](https://hub.docker.com/r/websummoner/edge) |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera.svg" width="24" alt="Opera"> | Opera | `websummoner/opera` | [![Opera](https://img.shields.io/docker/pulls/websummoner/opera)](https://hub.docker.com/r/websummoner/opera) |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave.svg" width="24" alt="Brave"> | Brave | `websummoner/brave` | [![Brave](https://img.shields.io/docker/pulls/websummoner/brave)](https://hub.docker.com/r/websummoner/brave) |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/yandex/yandex_24x24.png" width="24" alt="Yandex"> | Yandex | `websummoner/yandex` | [![Yandex](https://img.shields.io/docker/pulls/websummoner/yandex)](https://hub.docker.com/r/websummoner/yandex) |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari.svg" width="24" alt="Safari (WebKit)"> | Safari (WebKit) | `websummoner/safari` | [![Safari (WebKit)](https://img.shields.io/docker/pulls/websummoner/safari)](https://hub.docker.com/r/websummoner/safari) |
 
 ## Building Images
 
-Moved to: http://aerokube.com/images/latest/#_building_images
+Browser images published under the `websummoner` organization on
+[Docker Hub](https://hub.docker.com/u/websummoner) are provisioned by RIADVICE.
+For fully custom builds, this repository ships the public `images` tool — see
+[Building images](https://websummoner.github.io/images/guides/building-images/)
+in the documentation.
 
 ## Image information
-Moved to: http://aerokube.com/images/latest/#_browser_image_information
+
+Which images exist, what is inside them and how the tags are versioned is
+documented at [the documentation](https://websummoner.github.io/websummoner/reference/browser-images/).

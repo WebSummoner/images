@@ -1,4 +1,4 @@
-FROM browsers/base:7.4.2
+FROM websummoner/browser-base:1.0.0
 
 ARG VERSION
 ARG PACKAGE=chromium-browser

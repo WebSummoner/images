@@ -8,14 +8,14 @@ jobs:
   golang:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Setup Golang
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v7
         with:
-          go-version: ~1.22.2
+          go-version: ~1.27.0
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v6
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -28,15 +28,7 @@ jobs:
       - name: Build
         run: ci/build.sh
 
-      - name: Prepare release version
-        run: echo "RELEASE_VERSION=${GITHUB_REF:10}" >> $GITHUB_ENV
-
       - uses: AButler/upload-release-assets@v2.0
         with:
           files: 'dist/*'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Release docs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ci/docs.sh $RELEASE_VERSION ${{ secrets.GITHUB_TOKEN }}

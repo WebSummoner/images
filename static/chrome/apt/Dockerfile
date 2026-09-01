@@ -1,4 +1,4 @@
-FROM browsers/base:7.4.2
+FROM websummoner/browser-base:1.0.0
 
 ARG VERSION
 ARG PACKAGE=google-chrome-stable
@@ -6,9 +6,11 @@ ARG INSTALL_DIR=chrome
 
 LABEL browser=$PACKAGE:$VERSION
 
+# apt-key is gone since Ubuntu 24.04
 RUN \
-        curl -s https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-        echo 'deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google.list && \
+        install -d -m 0755 /etc/apt/keyrings && \
+        curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub -o /etc/apt/keyrings/google-chrome.asc && \
+        echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.asc] https://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google.list && \
         apt-get update && \
         apt-get -y --no-install-recommends install iproute2 $PACKAGE=$VERSION && \
          ( \

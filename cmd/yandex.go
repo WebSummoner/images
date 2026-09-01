@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/aerokube/images/build"
 	"github.com/spf13/cobra"
+	"github.com/websummoner/images/build"
 )
 
 var (

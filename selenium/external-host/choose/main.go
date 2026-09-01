@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"math/rand"
 	"os"
 	"time"
-	"fmt"
-	"encoding/json"
-	"math/rand"
 )
 
 var (

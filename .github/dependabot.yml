@@ -1,0 +1,51 @@
+# Dependency updates via GitHub Dependabot.
+# Weekly cadence keeps the manual CVE sweeps unnecessary; pull requests are
+# grouped so a repository gets one reviewable bump per ecosystem.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: gomod
+    directory: "/selenium/base/xseld"
+    schedule:
+      interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: gomod
+    directory: "/selenium/base/fileserver"
+    schedule:
+      interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: gomod
+    directory: "/static/chrome/devtools"
+    schedule:
+      interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: gomod
+    directory: "/static/brave/devtools"
+    schedule:
+      interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: gomod
+    directory: "/static/safari/cmd/prism"
+    schedule:
+      interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

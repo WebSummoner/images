@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/aerokube/images/build"
 	"github.com/spf13/cobra"
+	"github.com/websummoner/images/build"
 	"log"
 	"os"
 	"path/filepath"
@@ -35,7 +35,7 @@ func initFlags() {
 	if err != nil {
 		log.Fatalf("get current dir: %v", err)
 	}
-	defaultTestsDir := filepath.Join(cwd, "../selenoid-container-tests")
+	defaultTestsDir := filepath.Join(cwd, "../websummoner-container-tests")
 
 	rootCmd.PersistentFlags().StringSliceVarP(&tags, "tag", "t", []string{}, "image tag")
 	rootCmd.PersistentFlags().StringVarP(&browserSource, "browser", "b", "", "browser APT package version, package file path, package file URL")
@@ -50,6 +50,7 @@ func initFlags() {
 
 func init() {
 	initFlags()
+	rootCmd.AddCommand(braveCmd)
 	rootCmd.AddCommand(chromeCmd)
 	rootCmd.AddCommand(chromiumCmd)
 	rootCmd.AddCommand(edgeCmd)

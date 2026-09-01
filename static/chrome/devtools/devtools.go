@@ -10,7 +10,6 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -134,20 +133,7 @@ func getPageWebSocketUrl(targetId string) (*url.URL, error) {
 }
 
 func devtoolsHost() (string, error) {
-	if android {
-		return androidDevtoolsHost()
-	}
 	return detectDevtoolsHost(devtoolsBaseDir), nil
-}
-
-func androidDevtoolsHost() (string, error) {
-	const androidDevtoolsPort = 9333
-	cmd := exec.Command("adb", "forward", fmt.Sprintf("tcp:%d", androidDevtoolsPort), "localabstract:chrome_devtools_remote")
-	err := cmd.Run()
-	if err != nil {
-		return "", fmt.Errorf("failed to forward devtools port: %v", err)
-	}
-	return fmt.Sprintf("localhost:%d", androidDevtoolsPort), nil
 }
 
 func detectDevtoolsHost(baseDir string) string {
@@ -157,7 +143,7 @@ func detectDevtoolsHost(baseDir string) string {
 	if found {
 		candidates = append(candidates, pd)
 	} else {
-		for _, glob := range []string{".com.google.Chrome*", ".org.chromium.Chromium*"} {
+		for _, glob := range []string{".com.google.Chrome*", ".org.chromium.Chromium*", "com.google.Chrome*", "org.chromium.Chromium*", "ws-*"} {
 			cds, err := filepath.Glob(filepath.Join(baseDir, glob))
 			if err == nil {
 				candidates = append(candidates, cds...)

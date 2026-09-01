@@ -8,3 +8,12 @@ pkged.go
 .DS_Store
 
 selenium/barrier/barrier
+
+# locally built tool and nested-module binaries
+docs-site/dist/
+images-tool
+selenium/base/fileserver/fileserver
+selenium/base/xseld/xseld
+static/brave/devtools/devtools
+static/chrome/devtools/devtools
+static/safari/cmd/prism/prism

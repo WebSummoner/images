@@ -1,4 +1,4 @@
-FROM golang:1.22-bullseye as go
+FROM golang:1.27-bookworm AS go
 
 COPY choose /choose
 
@@ -6,7 +6,7 @@ COPY rproxy /rproxy
 
 RUN \
     apt-get update && \
-    apt-get install -y upx-ucl && \
+    (apt-get install -y upx-ucl || apt-get install -y upx || echo 'upx unavailable, skipping compression') && \
     cd /choose && \
     GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" && \
     upx /choose/choose && \

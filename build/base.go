@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/markbates/pkger"
-	"io"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -14,7 +13,6 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -137,57 +135,44 @@ func tmpDir() (string, error) {
 	return dir, nil
 }
 
+// copySourceFiles copies static/<srcDir> from the repository on disk into the
+// Docker build context. Walking the real directory (rather than go:embed) is
+// required because some static/ subdirectories are nested Go modules (e.g.
+// static/chrome/devtools), which go:embed excludes.
 func copySourceFiles(srcDir string, destDir string) (string, error) {
 
-	const prefix = "/static"
-	walkDir := filepath.Join(prefix, srcDir)
-	err := pkger.Walk(walkDir, func(path string, info os.FileInfo, err error) error {
+	walkDir := filepath.Join("static", srcDir)
+	if !fileExists(walkDir) {
+		return "", fmt.Errorf("source directory %s does not exist (run the tool from the repository root)", walkDir)
+	}
+
+	err := filepath.WalkDir(walkDir, func(p string, d fs.DirEntry, err error) error {
 
 		if err != nil {
 			return err
 		}
 
-		regex := regexp.MustCompile(`^.+:/static(.+)$`)
-		relativePath := regex.FindStringSubmatch(path)[1]
+		relativePath, err := filepath.Rel("static", p)
+		if err != nil {
+			return err
+		}
+
 		outputPath := filepath.Join(destDir, relativePath)
-		if info.IsDir() {
-			return os.MkdirAll(outputPath, info.Mode())
+		if d.IsDir() {
+			return os.MkdirAll(outputPath, 0755)
 		}
 
-		fileDir := filepath.Join(destDir, filepath.Dir(relativePath))
-		if !fileExists(fileDir) {
-			log.Printf("mkdir dir %s", fileDir)
-			return os.MkdirAll(fileDir, info.Mode())
-		}
-
-		src, err := pkger.Open(path)
-		if err != nil {
-			return err
-		}
-		defer src.Close()
-
-		dest, err := os.Create(outputPath)
-		if err != nil {
-			return err
-		}
-		defer dest.Close()
-
-		_, err = io.Copy(dest, src)
+		data, err := os.ReadFile(p)
 		if err != nil {
 			return err
 		}
 
-		err = dest.Sync()
+		info, err := d.Info()
 		if err != nil {
 			return err
 		}
 
-		err = os.Chmod(outputPath, info.Mode())
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return os.WriteFile(outputPath, data, info.Mode().Perm())
 	})
 
 	if err != nil {
@@ -239,7 +224,7 @@ func (i *Image) Build() error {
 		}()
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		defer server.Shutdown(ctx)
+		defer func() { _ = server.Shutdown(ctx) }()
 		if runtime.GOOS == "linux" {
 			ip, err := dockerHostIP()
 			if err != nil {
@@ -333,9 +318,9 @@ func doTest(ref string, testsDir string, browserName string, browserVersion stri
 		seleniumUrl = "http://localhost:4445/wd/hub"
 	}
 
-	exec.Command("docker", "rm", "-f", "selenium").Output()
+	_, _ = exec.Command("docker", "rm", "-f", "selenium").Output()
 	defer func() {
-		exec.Command("docker", "rm", "-f", "selenium").Output()
+		_, _ = exec.Command("docker", "rm", "-f", "selenium").Output()
 	}()
 
 	output, err := exec.Command("docker", "run", "-d", "--name", "selenium", "--privileged", "-p", "4445:4444", ref).Output()

@@ -1,5 +1,5 @@
-ARG VERSION
-FROM selenoid/dev_chromium:$VERSION
+ARG VERSION=latest
+FROM websummoner/dev_chromium:$VERSION
 
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 COPY entrypoint.sh /

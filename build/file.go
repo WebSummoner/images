@@ -143,6 +143,9 @@ func unzip(data []byte, fileName string, outputDir string) (string, error) {
 func untar(data []byte, fileName string, outputDir string) (string, error) {
 
 	gzr, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		return "", fmt.Errorf("open gzip stream for %s: %v", fileName, err)
+	}
 	defer gzr.Close()
 
 	extractAndWriteFile := func(tr *tar.Reader, header *tar.Header) (string, error) {
@@ -183,7 +186,9 @@ func untar(data []byte, fileName string, outputDir string) (string, error) {
 }
 
 func outputFile(outputPath string, mode os.FileMode, r io.Reader) error {
-	os.MkdirAll(filepath.Dir(outputPath), 0755)
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
+		return err
+	}
 	f, err := os.OpenFile(outputPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, mode)
 	if err != nil {
 		return err

@@ -1,5 +1,5 @@
-ARG VERSION
-FROM selenoid/dev_edge:$VERSION
+ARG VERSION=latest
+FROM websummoner/dev_edge:$VERSION
 
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 COPY msedgedriver /usr/bin/

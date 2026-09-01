@@ -9,14 +9,14 @@ jobs:
   golang:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Setup Golang
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v7
         with:
-          go-version: ~1.22.2
+          go-version: ~1.27.0
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v6
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -29,11 +29,6 @@ jobs:
       - name: Build
         run: ci/build.sh
 
-      - name: Latest docs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ci/docs.sh latest ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: release-drafter/release-drafter@v5
+      - uses: release-drafter/release-drafter@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

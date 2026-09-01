@@ -1,17 +1,18 @@
-ARG VERSION
-FROM golang:1.22-bullseye as go
+ARG VERSION=latest
+FROM golang:1.27-bookworm AS go
 
 COPY devtools /devtools
 
 RUN \
     apt-get update && \
-    apt-get install -y upx-ucl && \
+    (apt-get install -y upx-ucl || apt-get install -y upx || echo 'upx unavailable, skipping compression') && \
     cd /devtools && \
     go test -race && \
     GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" && \
-    upx /devtools/devtools
+    (command -v upx >/dev/null 2>&1 && upx /devtools/devtools || echo 'skipping upx /devtools/devtools')
 
-FROM selenoid/dev_chrome:$VERSION
+ARG VERSION=latest
+FROM websummoner/dev_chrome:$VERSION
 
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 COPY --from=go /devtools/devtools /usr/bin/

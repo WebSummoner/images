@@ -1,3 +1,3 @@
-module github.com/aerokube/images/prism
+module github.com/websummoner/images/prism
 
-go 1.22
+go 1.27

@@ -6,8 +6,10 @@ FILE_NAME=${FILE_NAME:-"video.mp4"}
 FRAME_RATE=${FRAME_RATE:-"12"}
 CODEC=${CODEC:-"libx264"}
 PRESET=${PRESET:-""}
-if [ "$CODEC" == "libx264" -a -n "$PRESET" ]; then
-    PRESET="-preset $PRESET"
+CRF=${CRF:-""}
+if [ "$CODEC" == "libx264" ]; then
+    [ -n "$PRESET" ] && PRESET="-preset $PRESET"
+    [ -n "$CRF" ] && CRF="-crf $CRF"
 fi
 INPUT_OPTIONS=${INPUT_OPTIONS:-""}
 HIDE_CURSOR=${HIDE_CURSOR:-""}
@@ -35,8 +37,9 @@ echo -n 'gIvST5iz2S0J1+JlXC1lD3HWvg61vDTV1xbmiGxZnjB6E3psXsjWUVQS4SRrch6rygQgtpw
 
 export PULSE_SERVER=${BROWSER_CONTAINER_NAME}
 
-if pactl info >/dev/null 2>&1; then
-  exec ffmpeg -f pulse -thread_queue_size 1024 -i default -y -f x11grab -video_size ${VIDEO_SIZE} -r ${FRAME_RATE} ${INPUT_OPTIONS} -i ${BROWSER_CONTAINER_NAME}:${DISPLAY} -codec:v ${CODEC} ${PRESET} -pix_fmt yuv420p -filter:v "pad=ceil(iw/2)*2:ceil(ih/2)*2" "/data/$FILE_NAME"
+# DISABLE_AUDIO=true skips the PulseAudio handshake and records video only.
+if [ "$DISABLE_AUDIO" != "true" ] && pactl info >/dev/null 2>&1; then
+  exec ffmpeg -f pulse -thread_queue_size 1024 -i default -y -f x11grab -video_size ${VIDEO_SIZE} -r ${FRAME_RATE} ${INPUT_OPTIONS} -i ${BROWSER_CONTAINER_NAME}:${DISPLAY} -codec:v ${CODEC} ${PRESET} ${CRF} -pix_fmt yuv420p -codec:a aac -b:a 128k -movflags +faststart -filter:v "pad=ceil(iw/2)*2:ceil(ih/2)*2" "/data/$FILE_NAME"
 else
-  exec ffmpeg -y -f x11grab -video_size ${VIDEO_SIZE} -r ${FRAME_RATE} ${INPUT_OPTIONS} -i ${BROWSER_CONTAINER_NAME}:${DISPLAY} -codec:v ${CODEC} ${PRESET} -pix_fmt yuv420p -filter:v "pad=ceil(iw/2)*2:ceil(ih/2)*2" "/data/$FILE_NAME"
+  exec ffmpeg -y -f x11grab -video_size ${VIDEO_SIZE} -r ${FRAME_RATE} ${INPUT_OPTIONS} -i ${BROWSER_CONTAINER_NAME}:${DISPLAY} -codec:v ${CODEC} ${PRESET} ${CRF} -pix_fmt yuv420p -movflags +faststart -filter:v "pad=ceil(iw/2)*2:ceil(ih/2)*2" "/data/$FILE_NAME"
 fi

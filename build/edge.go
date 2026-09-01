@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -45,7 +46,7 @@ func (c *Edge) Build() error {
 		}
 	}
 
-	devImageTag := fmt.Sprintf("selenoid/dev_edge:%s", pkgTagVersion)
+	devImageTag := fmt.Sprintf("websummoner/dev_edge:%s", pkgTagVersion)
 	devImageRequirements := Requirements{NoCache: c.NoCache, Tags: []string{devImageTag}}
 	devImage, err := NewImage(srcDir, devDestDir, devImageRequirements)
 	if err != nil {
@@ -112,8 +113,16 @@ func (c *Edge) channelToBuildArgs() []string {
 
 func (c *Edge) downloadMSEdgeDriver(dir string) (string, error) {
 	version := c.DriverVersion
-	// Full driver versions list can be fetched as XML from https://msedgedriver.azureedge.net/
-	u := fmt.Sprintf("https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/%s/edgedriver_linux64.zip", version)
+	if version == LatestVersion {
+		// "latest" is not a valid path segment on the CDN — resolve the real
+		// version from the LATEST_STABLE pointer.
+		data, err := sendGet("https://msedgedriver.azureedge.net/LATEST_STABLE")
+		if err != nil {
+			return "", fmt.Errorf("resolve latest msedgedriver version: %v", err)
+		}
+		version = strings.TrimSpace(string(data))
+	}
+	u := fmt.Sprintf("https://msedgedriver.microsoft.com/%s/edgedriver_linux64.zip", version)
 	_, err := downloadDriver(u, msedgeDriverBinary, dir)
 	if err != nil {
 		return "", fmt.Errorf("download msedgedriver: %v", err)

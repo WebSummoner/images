@@ -1,5 +1,6 @@
 # Contributor: Anton Dzyk <anton.dzyk@yandex.ru>
-# Maintainer: Ivan Krutov <vania-pooh@aerokube.com>
+# Contributor: Ivan Krutov <vania-pooh@aerokube.com>
+# Maintainer: Ghazi Triki <ghazi.triki@riadvice.com>
 pkgname=ffmpeg-x11grab
 pkgsource=ffmpeg
 pkgver=4.3

@@ -50,17 +50,17 @@ func mockDevtoolsMux() http.Handler {
   "description": "",
   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/one",
   "id": "one",
-  "title": "Aerokube",
+  "title": "RIADVICE",
   "type": "page",
-  "url": "https://www.aerokube.com/",
+  "url": "https://riadvice.com/",
   "webSocketDebuggerUrl": "ws://%s/devtools/page/one"
 }, {
   "description": "",
   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/two",
   "id": "two",
-  "title": "Aerokube Selenoid",
+  "title": "WebSummoner",
   "type": "page",
-  "url": "https://selenoid.aerokube.com/",
+  "url": "https://websummoner.riadvice.com/",
   "webSocketDebuggerUrl": "ws://%s/devtools/page/two"
 } ]`, defaultDevtoolsHost, defaultDevtoolsHost)))
 
@@ -142,7 +142,7 @@ func TestDevtools(t *testing.T) {
 	defer browserConn.Close()
 
 	browserClient := cdp.NewClient(browserConn)
-	targets, err := browserClient.Target.GetTargets(ctx)
+	targets, err := browserClient.Target.GetTargets(ctx, nil)
 	AssertThat(t, err, Is{nil})
 	AssertThat(t, len(targets.TargetInfos), EqualTo{2})
 

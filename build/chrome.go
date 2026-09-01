@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -63,7 +62,7 @@ func (c *Chrome) Build() error {
 		}
 	}
 
-	devImageTag := fmt.Sprintf("selenoid/dev_chrome:%s", pkgTagVersion)
+	devImageTag := fmt.Sprintf("websummoner/dev_chrome:%s", pkgTagVersion)
 	devImageRequirements := Requirements{NoCache: c.NoCache, Tags: []string{devImageTag}}
 	devImage, err := NewImage(srcDir, devDestDir, devImageRequirements)
 	if err != nil {
@@ -150,13 +149,13 @@ func (c *Chrome) parseChromeDriverVersion(pkgVersion string, chromeDriverVersion
 				if err != nil {
 					return false
 				}
-				return lv.LessThan(rv)
+				return lv.GreaterThan(rv)
 			})
 			return matchingVersions[0], nil
 		}
 
-		const baseUrl = "https://chromedriver.storage.googleapis.com/"
-		v, err := c.getLatestChromeDriver(baseUrl, pkgVersion)
+		const lastKnownGoodURL = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
+		v, err := c.getLatestChromeDriver(lastKnownGoodURL, pkgVersion)
 		if err != nil {
 			return "", err
 		}
@@ -165,12 +164,15 @@ func (c *Chrome) parseChromeDriverVersion(pkgVersion string, chromeDriverVersion
 	return version, nil
 }
 
-func (c *Chrome) downloadChromeDriver(dir string, version string, chromeDriverVersions map[string]string) error {
-	u := fmt.Sprintf("https://chromedriver.storage.googleapis.com/%s/chromedriver_linux64.zip", version)
-	fn := chromeDriverBinary
+// downloadChromeDriver fetches the ChromeDriver binary for a specific
+// Chrome-for-Testing version into dir. Shared by every Chromium-based
+// browser build (Chrome, Brave, ...).
+func downloadChromeDriver(dir string, version string, chromeDriverVersions map[string]string) error {
+	// All Chrome-for-Testing archives share the same nested layout.
+	u := fmt.Sprintf("https://storage.googleapis.com/chrome-for-testing-public/%s/linux64/chromedriver-linux64.zip", version)
+	fn := newChromeDriverBinary
 	if cdu, ok := chromeDriverVersions[version]; ok {
 		u = cdu
-		fn = newChromeDriverBinary
 	}
 	outputPath, err := downloadDriver(u, fn, dir)
 	if err != nil {
@@ -185,42 +187,36 @@ func (c *Chrome) downloadChromeDriver(dir string, version string, chromeDriverVe
 	return nil
 }
 
+func (c *Chrome) downloadChromeDriver(dir string, version string, chromeDriverVersions map[string]string) error {
+	return downloadChromeDriver(dir, version, chromeDriverVersions)
+}
+
 func (c *Chrome) getLatestChromeDriver(baseUrl string, pkgVersion string) (string, error) {
-	fetchVersion := func(url string) (string, error) {
-		data, err := sendGet(url)
-		if err != nil {
-			return "", fmt.Errorf("read chromedriver version: %v", err)
-		}
-		return string(data), nil
+	channel := "Stable"
+	switch c.BrowserChannel {
+	case "dev":
+		channel = "Dev"
+	case "beta":
+		channel = "Beta"
 	}
-
-	if c.BrowserChannel != "dev" {
-		chromeBuildVersion := buildVersion(pkgVersion)
-		u := baseUrl + fmt.Sprintf("LATEST_RELEASE_%s", chromeBuildVersion)
-		v, err := fetchVersion(u)
-		if err == nil {
-			return v, nil
-		}
-	}
-
-	chromeMajorVersion, err := strconv.Atoi(majorVersion(pkgVersion))
+	data, err := sendGet(baseUrl)
 	if err != nil {
-		return "", fmt.Errorf("chrome major version: %v", err)
+		return "", fmt.Errorf("read chromedriver version: %v", err)
 	}
-	u := baseUrl + fmt.Sprintf("LATEST_RELEASE_%d", chromeMajorVersion)
-	v, err := fetchVersion(u)
-	if err == nil {
-		return v, nil
-	} else {
-		previousChromeMajorVersion := chromeMajorVersion - 1
-		u = baseUrl + fmt.Sprintf("LATEST_RELEASE_%d", previousChromeMajorVersion)
-		v, err := fetchVersion(u)
-		if err == nil {
-			return v, nil
-		} else {
-			return "", errors.New("could not find compatible chromedriver")
-		}
+	var cc chromeChannels
+	if err := json.Unmarshal(data, &cc); err != nil {
+		return "", fmt.Errorf("unable to parse JSON: %v", err)
 	}
+	if ch, ok := cc.Channels[channel]; ok && ch.Version != "" {
+		return ch.Version, nil
+	}
+	return "", errors.New("could not find compatible chromedriver")
+}
+
+type chromeChannels struct {
+	Channels map[string]struct {
+		Version string `json:"version"`
+	} `json:"channels"`
 }
 
 func fetchChromeDriverVersions() (map[string]string, error) {

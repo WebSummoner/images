@@ -1,14 +1,11 @@
 package cmd
 
 import (
-	"github.com/aerokube/images/build"
 	"github.com/spf13/cobra"
+	"github.com/websummoner/images/build"
 )
 
 var (
-	selenoidVersion string
-	seleniumVersion string
-
 	firefoxCmd = &cobra.Command{
 		Use:   "firefox",
 		Short: "build Firefox image",
@@ -24,13 +21,11 @@ var (
 				Tags:           tags,
 				PushImage:      push,
 			}
-			firefox := &build.Firefox{SelenoidVersion: selenoidVersion, SeleniumVersion: seleniumVersion, Requirements: req}
+			firefox := &build.Firefox{Requirements: req}
 			return firefox.Build()
 		},
 	}
 )
 
 func init() {
-	firefoxCmd.Flags().StringVar(&selenoidVersion, "selenoid-version", build.LatestVersion, "Selenoid binary version")
-	firefoxCmd.Flags().StringVar(&seleniumVersion, "selenium-version", "", "Selenium JAR version")
 }

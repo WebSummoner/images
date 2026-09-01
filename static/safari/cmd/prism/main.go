@@ -13,18 +13,42 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 	"time"
 )
 
 var (
-	listen         = ":4444"
-	target         = "http://localhost:5555"
-	waitTimeout    = 30 * time.Second
-	gracePeriod    = 30 * time.Second
-	browserName    = "safari"
-	browserVersion = "15.0"
+	listen      = ":4444"
+	target      = "http://localhost:5555"
+	waitTimeout = 30 * time.Second
+	gracePeriod = 30 * time.Second
+	browserName = "safari"
+	// baked into the image as WEBKIT_VERSION
+	browserVersion = os.Getenv("WEBKIT_VERSION")
+	// WebKit plays nothing without a user gesture
+	enableAudio = os.Getenv("ENABLE_AUDIO") == "true"
 )
+
+// autoclick grants the page the gesture WebKit demands before playback.
+func autoclick(sessionId string) {
+	if !enableAudio || sessionId == "" {
+		return
+	}
+	go func() {
+		time.Sleep(500 * time.Millisecond)
+		body := `{"actions":[{"type":"pointer","id":"prism","parameters":{"pointerType":"mouse"},"actions":[{"type":"pointerMove","x":1,"y":1},{"type":"pointerDown","button":0},{"type":"pointerUp","button":0}]}]}`
+		req, err := http.NewRequest(http.MethodPost, target+path.Join("/session", sessionId, "actions"), strings.NewReader(body))
+		if err != nil {
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+		resp, err := http.DefaultClient.Do(req)
+		if err == nil {
+			resp.Body.Close()
+		}
+	}()
+}
 
 func wait(ctx context.Context, target string) (*url.URL, error) {
 	for {
@@ -79,6 +103,12 @@ func main() {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
+			if r.Method == http.MethodPost {
+				fragments := strings.Split(strings.TrimPrefix(r.URL.Path, "/wd/hub"), "/")
+				if len(fragments) == 4 && fragments[1] == "session" && fragments[3] == "url" {
+					autoclick(fragments[2])
+				}
+			}
 			if err == nil {
 				if _, ok := value["desiredCapabilities"]; ok {
 					delete(value, "desiredCapabilities")
@@ -115,12 +145,15 @@ func main() {
 					}
 					if o, ok := values["value"]; ok {
 						if value, ok := o.(map[string]interface{}); ok {
-							if o, ok := value["capabilities"]; ok {
-								if capabilities, ok := o.(map[string]interface{}); ok {
-									capabilities["browserName"] = browserName
-									capabilities["browserVersion"] = browserVersion
-									delete(capabilities, "platformName")
+							if capabilities, ok := value["capabilities"]; ok {
+								if caps, ok := capabilities.(map[string]interface{}); ok {
+									caps["browserName"] = browserName
+									caps["browserVersion"] = browserVersion
+									delete(caps, "platformName")
 								}
+							}
+							if id, ok := value["sessionId"].(string); ok && id != "" {
+								autoclick(id)
 							}
 						}
 					}
