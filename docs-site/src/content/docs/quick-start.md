@@ -6,14 +6,14 @@ description: Pull a published image, or build one yourself with the images tool.
 ## Using a published image
 
 Most people never build anything — pull the image and point
-[WebSummoner](https://websummoner.github.io/websummoner/) at it:
+[WebSummoner](https://websummoner.riadvice.com/websummoner/) at it:
 
 ```bash
 docker pull websummoner/chrome:latest
 ```
 
 Available tags and the versioning policy are documented in
-[Image tags](https://websummoner.github.io/websummoner/reference/image-tags/).
+[Image tags](https://websummoner.riadvice.com/websummoner/reference/image-tags/).
 
 ## Building the tool
 

@@ -28,7 +28,7 @@ the `proxy` capability into the system environment WebKit actually reads. Two
 behaviours still show through to your tests — cookies must set `sameSite`, and
 `quit()` can throw even though the session ended. All four are documented on the
 hub's
-[WebKit section](https://websummoner.github.io/websummoner/reference/browser-images/#webkit-safari).
+[WebKit section](https://websummoner.riadvice.com/websummoner/reference/browser-images/#webkit-safari).
 
 ## Building
 

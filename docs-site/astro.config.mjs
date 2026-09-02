@@ -2,6 +2,18 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import rehypeBaseLinks from './plugins/base-links.mjs';
 
+// Analytics is opt-in: no GA_MEASUREMENT_ID, no tracking code.
+const gaId = process.env.GA_MEASUREMENT_ID;
+
+// No Google code in the page: /consent.js injects gtag only once the visitor accepts.
+const analytics = gaId
+  ? [
+      { tag: 'script', content: `window.WS_GA_ID='${gaId}';` },
+      { tag: 'script', attrs: { defer: true, src: '/consent.js' } },
+    ]
+  : [];
+
+
 // Static output only: `astro build` emits a plain `dist/` folder that GitHub
 // Pages (or any web server) can serve. Full-text search is Pagefind — a
 // static index generated at build time under /_pagefind/. No database, no
@@ -14,7 +26,7 @@ import rehypeBaseLinks from './plugins/base-links.mjs';
 // project GitHub Pages URL (username.github.io/<repo>/), set
 // base: '/images/' again and restore `site` accordingly.
 export default defineConfig({
-  site: 'https://websummoner.github.io',
+  site: 'https://websummoner.riadvice.com',
   base: '/images/',
 
   // Hand-written root-relative links in Markdown are not base-aware on their
@@ -27,12 +39,13 @@ export default defineConfig({
     starlight({
       title: 'Browser Images',
       description:
-        'Browser images for WebSummoner — Chrome, Firefox, Edge, Opera, Brave, Yandex and WebKit, built from this repository.',
+        'Browser images for WebSummoner — Chrome, Firefox, Edge, Opera, Brave, Yandex and WebKit, built from this repository. Developed and maintained by RIADVICE.',
       favicon: '/img/favicon.png',
       head: [
-        { tag: 'meta', attrs: { property: 'og:image', content: 'https://websummoner.github.io/images/img/og-image.jpg' } },
+        ...analytics,
+        { tag: 'meta', attrs: { property: 'og:image', content: 'https://websummoner.riadvice.com/images/img/og-image.jpg' } },
         { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
-        { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://websummoner.github.io/images/img/og-image.jpg' } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://websummoner.riadvice.com/images/img/og-image.jpg' } },
       ],
       customCss: ['./src/styles/custom.css'],
       social: [

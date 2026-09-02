@@ -25,10 +25,10 @@ This repository contains [Docker](http://docker.com/) build files to be used for
 Browser images published under the `websummoner` organization on
 [Docker Hub](https://hub.docker.com/u/websummoner) are provisioned by RIADVICE.
 For fully custom builds, this repository ships the public `images` tool — see
-[Building images](https://websummoner.github.io/images/guides/building-images/)
+[Building images](https://websummoner.riadvice.com/images/guides/building-images/)
 in the documentation.
 
 ## Image information
 
 Which images exist, what is inside them and how the tags are versioned is
-documented at [the documentation](https://websummoner.github.io/websummoner/reference/browser-images/).
+documented at [the documentation](https://websummoner.riadvice.com/websummoner/reference/browser-images/).

@@ -46,7 +46,7 @@ Then add `--test` to run the suite against the image you just built.
 ### Firefox
 
 ```bash
-./images firefox -b 154.0.1+build1-0ubuntu0.26.04.1 -t websummoner/firefox:154.0
+./images firefox -b 155.0~build1 -t websummoner/firefox:155.0.0
 ```
 
 Omit `-d` (or pass `latest`) to take the newest matching geckodriver.
@@ -71,7 +71,7 @@ Omit `-d` (or pass `latest`) to take the newest matching geckodriver.
 
 Do not pass `-d` for Opera. `operachromiumdriver` tags follow the Chromium
 version Opera is built on, not Opera's own line, so the tool resolves it — see
-[Opera](https://websummoner.github.io/websummoner/reference/browser-images/#opera).
+[Opera](https://websummoner.riadvice.com/websummoner/reference/browser-images/#opera).
 
 ### Yandex Browser
 
@@ -104,7 +104,7 @@ memory footprint. Build it deliberately, on a machine chosen for it.
 Replace the package version with a path to a `.deb`:
 
 ```bash
-./images firefox -b /path/to/firefox_154.0.1_amd64.deb -t websummoner/firefox:154.0
+./images firefox -b /path/to/firefox_155.0_amd64.deb -t websummoner/firefox:155.0.0
 ```
 
 The file name must contain the full version — the tool derives the browser

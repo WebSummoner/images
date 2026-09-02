@@ -36,7 +36,7 @@ its Chromium and only its own driver accounts for that — a real driver one lin
 behind beats a foreign driver on the exact line.
 
 Two more behaviours show through to tests, documented on the hub's
-[Opera section](https://websummoner.github.io/websummoner/reference/browser-images/#opera):
+[Opera section](https://websummoner.riadvice.com/websummoner/reference/browser-images/#opera):
 operadriver answers in legacy JSONWP unless asked for W3C (the hub asks), and a
 fresh session reports Opera's own UI pages as extra window handles.
 

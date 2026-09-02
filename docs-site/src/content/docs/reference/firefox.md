@@ -8,7 +8,7 @@ sidebar:
 | | |
 | --- | --- |
 | Image | `websummoner/firefox` |
-| Browser | Mozilla Firefox 154.0.1 |
+| Browser | Mozilla Firefox 155.0.0 |
 | Driver | geckodriver 0.37.1 |
 
 ## How it works
@@ -28,5 +28,5 @@ and loopback addresses. Without it, requests proxied from the hub are rejected.
 ## Building
 
 ```bash
-./images firefox -b 154.0.1+build1-0ubuntu0.26.04.1 -t websummoner/firefox:154.0
+./images firefox -b 155.0~build1 -t websummoner/firefox:155.0.0
 ```

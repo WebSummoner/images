@@ -11,7 +11,7 @@ browser layer, then a driver layer.
 | | Browser | Version | Driver | Driver matches |
 | --- | --- | --- | --- | --- |
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome.svg" width="20" alt="Chrome"> | [Chrome](/reference/chrome/) | 152.0.7977.64 | ChromeDriver 152.0.7977.64 | exact build |
-| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox.svg" width="20" alt="Firefox"> | [Firefox](/reference/firefox/) | 154.0.1 | geckodriver 0.37.1 | independent |
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox.svg" width="20" alt="Firefox"> | [Firefox](/reference/firefox/) | 155.0.0 | geckodriver 0.37.1 | independent |
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge.svg" width="20" alt="Edge"> | [Edge](/reference/edge/) | 152.0.4191.53 | Edge WebDriver 152.0.4191.53 | exact build |
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera.svg" width="20" alt="Opera"> | [Opera](/reference/opera/) | 135.0.5973.66 | OperaDriver 150.0.7871.212 | Chromium line |
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/brave/brave.svg" width="20" alt="Brave"> | [Brave](/reference/brave/) | 1.94.117 (Chromium 152) | ChromeDriver 152.0.7977.64 | embedded Chromium |
@@ -20,7 +20,7 @@ browser layer, then a driver layer.
 
 The versions above are what the current images contain. Tags and the versioning
 policy are documented in
-[Image tags](https://websummoner.github.io/websummoner/reference/image-tags/).
+[Image tags](https://websummoner.riadvice.com/websummoner/reference/image-tags/).
 
 ## How a browser is driven
 
