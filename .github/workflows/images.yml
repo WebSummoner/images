@@ -1,19 +1,21 @@
 name: images
 
-# Publishes browser-base and the video recorder. Browser images are built
-# elsewhere; the hub cannot record video unless the recorder is pullable.
+# Publishes browser-base and the video recorder. Neither follows a commit, so
+# only a release tag naming one of them builds anything:
+#   browser-base-1.0.1     -> websummoner/browser-base
+#   video-recorder-1.2.0   -> websummoner/video-recorder
+# Every other tag, and every push, is ignored.
 
 on:
   push:
-    branches: [master]
-    paths:
-      - 'selenium/base/**'
-      - 'selenium/video/**'
-      - 'ci/docker-push.sh'
-      - '.github/workflows/images.yml'
-  release:
-    types: [published]
+    tags:
+      - 'browser-base-*'
+      - 'video-recorder-*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'browser-base-<version> or video-recorder-<version>'
+        required: true
 
 permissions:
   contents: read
@@ -24,13 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Publish browser-base and video-recorder
+      - name: Publish
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            ci/docker-push.sh "${GITHUB_REF#refs/tags/}"
-          else
-            ci/docker-push.sh latest
-          fi
+        run: ci/docker-push.sh "${{ inputs.tag || github.ref_name }}"
