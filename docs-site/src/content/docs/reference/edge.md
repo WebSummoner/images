@@ -8,8 +8,8 @@ sidebar:
 | | |
 | --- | --- |
 | Image | `websummoner/edge` |
-| Browser | Microsoft Edge 152.0.4191.53 |
-| Driver | Microsoft Edge WebDriver 152.0.4191.53 |
+| Browser | Microsoft Edge 152.0.4191.62 |
+| Driver | Microsoft Edge WebDriver 152.0.4191.62 |
 
 ## How it works
 
@@ -20,5 +20,5 @@ build, so the image pins both to the same version.
 ## Building
 
 ```bash
-./images edge -b 152.0.4191.53-1 -d 152.0.4191.53 -t websummoner/edge:152.0
+./images edge -b 152.0.4191.62-1 -d 152.0.4191.62 -t websummoner/edge:152.0
 ```

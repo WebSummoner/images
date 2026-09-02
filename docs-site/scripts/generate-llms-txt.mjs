@@ -72,10 +72,10 @@ pages.sort((a, b) => {
 });
 
 const lines = [
-  '# WebSummoner docs',
+  '# WebSummoner images docs',
   '',
-  '> Guides and references for WebSummoner — a fast Selenium hub launching',
-  '> browsers in Docker containers. Developed and maintained by RIADVICE.',
+  '> Guides and references for the WebSummoner browser images — the Dockerfiles',
+  '> and build tool behind the browsers WebSummoner summons. Maintained by RIADVICE.',
   '',
 ];
 

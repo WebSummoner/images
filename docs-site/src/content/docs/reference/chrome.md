@@ -8,8 +8,8 @@ sidebar:
 | | |
 | --- | --- |
 | Image | `websummoner/chrome` |
-| Browser | Google Chrome 152.0.7977.64 |
-| Driver | ChromeDriver 152.0.7977.64 |
+| Browser | Google Chrome 152.0.7977.75 |
+| Driver | ChromeDriver 152.0.7977.75 |
 
 ## How it works
 
@@ -24,7 +24,7 @@ name or binary path for it.
 ## Building
 
 ```bash
-./images chrome -b 152.0.7977.64-1 -d latest -t websummoner/chrome:152.0
+./images chrome -b 152.0.7977.75-1 -d latest -t websummoner/chrome:152.0
 ```
 
 `-d latest` takes the matching Chrome for Testing driver. Pass an explicit

@@ -54,19 +54,19 @@ Omit `-d` (or pass `latest`) to take the newest matching geckodriver.
 ### Chrome
 
 ```bash
-./images chrome -b 152.0.7977.64-1 -d latest -t websummoner/chrome:152.0
+./images chrome -b 152.0.7977.75-1 -d latest -t websummoner/chrome:152.0
 ```
 
 ### Microsoft Edge
 
 ```bash
-./images edge -b 152.0.4191.53-1 -d 152.0.4191.53 -t websummoner/edge:152.0
+./images edge -b 152.0.4191.62-1 -d 152.0.4191.62 -t websummoner/edge:152.0
 ```
 
 ### Opera
 
 ```bash
-./images opera -b 135.0.5973.66 -t websummoner/opera:135.0
+./images opera -b 135.0.5973.76 -t websummoner/opera:135.0
 ```
 
 Do not pass `-d` for Opera. `operachromiumdriver` tags follow the Chromium
@@ -115,7 +115,7 @@ version by parsing it.
 Add `--push` to push after building:
 
 ```bash
-./images chrome -b 152.0.7977.64-1 -t websummoner/chrome:152.0 --push
+./images chrome -b 152.0.7977.75-1 -t websummoner/chrome:152.0 --push
 ```
 
 ## Selecting a browser channel

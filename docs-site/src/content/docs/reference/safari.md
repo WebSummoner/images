@@ -8,7 +8,7 @@ sidebar:
 | | |
 | --- | --- |
 | Image | `websummoner/safari` |
-| Engine | WebKitGTK 6.0 (`libwebkitgtk-6.0.so.4`) |
+| Engine | WebKitGTK 2.52.6, API series 6.0 (`libwebkitgtk-6.0.so.4`) |
 | Driver | WebKitWebDriver |
 
 :::caution

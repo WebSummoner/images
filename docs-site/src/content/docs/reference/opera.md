@@ -8,7 +8,7 @@ sidebar:
 | | |
 | --- | --- |
 | Image | `websummoner/opera` |
-| Browser | Opera 135.0.5973.66 (Chromium 151) |
+| Browser | Opera 135.0.5973.76 (Chromium 151) |
 | Driver | OperaDriver 150.0.7871.212 |
 
 ## How it works
@@ -43,5 +43,5 @@ fresh session reports Opera's own UI pages as extra window handles.
 ## Building
 
 ```bash
-./images opera -b 135.0.5973.66 -t websummoner/opera:135.0
+./images opera -b 135.0.5973.76 -t websummoner/opera:135.0
 ```
