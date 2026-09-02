@@ -1,0 +1,36 @@
+name: images
+
+# Publishes browser-base and the video recorder. Browser images are built
+# elsewhere; the hub cannot record video unless the recorder is pullable.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'selenium/base/**'
+      - 'selenium/video/**'
+      - 'ci/docker-push.sh'
+      - '.github/workflows/images.yml'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Publish browser-base and video-recorder
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            ci/docker-push.sh "${GITHUB_REF#refs/tags/}"
+          else
+            ci/docker-push.sh latest
+          fi
