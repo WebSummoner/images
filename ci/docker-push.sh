@@ -32,9 +32,9 @@ REPO="$ORG/$IMAGE"
 
 TAGS=("$VERSION")
 if [[ "$VERSION" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
-    # The hub pulls websummoner/video-recorder:latest-release by default.
-    [ "$IMAGE" = "video-recorder" ] && TAGS+=("latest-release")
-    TAGS+=("latest")
+    # latest-release is the "current" pointer: the hub pulls the recorder by it,
+    # and browser images are built against the base by it.
+    TAGS+=("latest-release" "latest")
 else
     echo "==> $VERSION is a pre-release: publishing that tag only"
 fi
