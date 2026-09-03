@@ -9,7 +9,7 @@ sidebar:
 | --- | --- |
 | Image | `websummoner/opera` |
 | Browser | Opera 135.0.5973.76 (Chromium 151) |
-| Driver | OperaDriver 150.0.7871.212 |
+| Driver | OperaDriver 151.0.7922.176 |
 
 ## How it works
 
@@ -21,19 +21,22 @@ N+16. Passing `-d 135.0.…` fetches a driver sixteen majors too old, which
 refuses every session. The tool works out the Chromium line itself, so do not
 pass `-d`.
 
-**Opera publishes late.** At the time of writing there is no driver on the
-Chromium 151 line that Opera 135 needs, so the tool falls back to the newest
-`operadriver` — never a chromedriver. The version check in this driver family
-is a *warning*, not a refusal: OperaDriver 150 drives Opera 135 and logs
+**Opera publishes late.** A new Opera often ships before the driver for its
+Chromium line exists, so the tool falls back to the newest `operadriver` — never
+a chromedriver. The version check in this family is a *warning*, not a refusal,
+so a driver one line behind still drives the browser and logs
 
 ```
 This version of OperaDriver has not been tested with Opera version 151.
 ```
 
-then works normally. Substituting a Chrome for Testing chromedriver also starts
-sessions, but crashes the renderer whenever a page opens a window. Opera patches
-its Chromium and only its own driver accounts for that — a real driver one line
-behind beats a foreign driver on the exact line.
+Substituting a Chrome for Testing chromedriver also starts sessions, but crashes
+the renderer whenever a page opens a window: Opera patches its Chromium and only
+its own driver accounts for that. A real driver one line behind beats a foreign
+driver on the exact line.
+
+The current image needs no fallback — OperaDriver 151.0.7922.176 matches the
+Chromium line Opera 135 is built from.
 
 Two more behaviours show through to tests, documented on the hub's
 [Opera section](https://websummoner.riadvice.com/websummoner/reference/browser-images/#opera):
