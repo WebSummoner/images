@@ -4,7 +4,8 @@ ARG VERSION=19.4.2.698-1
 
 LABEL browser=yandex-browser-stable:$VERSION
 
-# apt-key is gone since Ubuntu 24.04
+# apt-key is gone since Ubuntu 24.04. The package rewrites the sources file it
+# finds, so remove by glob: a plain rm of our own name fails once it has.
 RUN  \
         install -d -m 0755 /etc/apt/keyrings && \
         curl -fsSL https://repo.yandex.ru/yandex-browser/YANDEX-BROWSER-KEY.GPG -o /etc/apt/keyrings/yandex-browser.asc && \
@@ -12,5 +13,5 @@ RUN  \
         apt-get update && \
         apt-get -y --no-install-recommends install yandex-browser-stable=$VERSION && \
         yandex-browser --version && \
-        rm /etc/apt/sources.list.d/yandex-browser.list && \
+        rm -f /etc/apt/sources.list.d/yandex-browser*.list && \
         rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
