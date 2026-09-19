@@ -1,4 +1,17 @@
 ARG VERSION=latest
+FROM golang:1.27-bookworm AS go
+
+COPY devtools /devtools
+
+RUN \
+    apt-get update && \
+    (apt-get install -y upx-ucl || apt-get install -y upx || echo 'upx unavailable, skipping compression') && \
+    cd /devtools && \
+    go test -race && \
+    GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" && \
+    (command -v upx >/dev/null 2>&1 && upx /devtools/devtools || echo 'skipping upx /devtools/devtools')
+
+ARG VERSION=latest
 FROM websummoner/dev_yandex:$VERSION
 
 ARG VERSION

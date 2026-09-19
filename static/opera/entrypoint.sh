@@ -16,6 +16,9 @@ clean() {
   if [ -n "$XSELD_PID" ]; then
     kill -TERM "$XSELD_PID"
   fi
+  if [ -n "$DEVTOOLS_PID" ]; then
+    kill -TERM "$DEVTOOLS_PID"
+  fi
   if [ -n "$PULSE_PID" ]; then
     kill -TERM "$PULSE_PID"
   fi
@@ -51,6 +54,9 @@ fi
 
 /usr/bin/fileserver &
 FILESERVER_PID=$!
+
+/usr/bin/devtools &
+DEVTOOLS_PID=$!
 
 DISPLAY="$DISPLAY" /usr/bin/xseld &
 XSELD_PID=$!
