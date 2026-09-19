@@ -22,6 +22,9 @@ clean() {
   if [ -n "$XVFB_PID" ]; then
     kill -TERM "$XVFB_PID"
   fi
+  if [ -n "$BIDI_RELAY_PID" ]; then
+    kill -TERM "$BIDI_RELAY_PID"
+  fi
   if [ -n "$DRIVER_PID" ]; then
     kill -TERM "$DRIVER_PID"
   fi
@@ -74,6 +77,11 @@ DISPLAY="$DISPLAY" /usr/bin/geckodriver --host 0.0.0.0 --port 4444 \
   --allow-hosts "$(hostname)" localhost 127.0.0.1 "$(hostname -i 2>/dev/null || echo 127.0.0.1)" \
   --allow-origins "http://$(hostname):4444" "http://localhost:4444" ${DRIVER_ARGS} &
 DRIVER_PID=$!
+
+# Firefox binds the BiDi remote agent to loopback and geckodriver only reports
+# it, so relay the same port on the container address for the hub to reach.
+socat TCP-LISTEN:9222,bind="$(hostname -i 2>/dev/null | awk '{print $1}')",fork,reuseaddr TCP:127.0.0.1:9222 &
+BIDI_RELAY_PID=$!
 
 if env | grep -q ROOT_CA_; then
   while true; do
