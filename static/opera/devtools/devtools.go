@@ -11,8 +11,10 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -137,42 +139,50 @@ func devtoolsHost() (string, error) {
 }
 
 func detectDevtoolsHost(baseDir string) string {
-	var candidates []string
-
-	pd, found := os.LookupEnv("BROWSER_PROFILE_DIR")
-	if found {
-		candidates = append(candidates, pd)
-	} else {
-		for _, glob := range []string{".com.google.Chrome*", ".org.chromium.Chromium*", "com.google.Chrome*", "org.chromium.Chromium*", "ws-*"} {
-			cds, err := filepath.Glob(filepath.Join(baseDir, glob))
-			if err == nil {
-				candidates = append(candidates, cds...)
-			}
+	if pd, found := os.LookupEnv("BROWSER_PROFILE_DIR"); found {
+		if port, ok := portFrom(filepath.Join(pd, "DevToolsActivePort")); ok {
+			return fmt.Sprintf("127.0.0.1:%d", port)
+		}
+		return defaultDevtoolsHost
+	}
+	// Any profile directory will do: each Chromium fork names its own
+	// differently, and the newest port file is the browser we just started.
+	var files []string
+	for _, glob := range []string{"*/DevToolsActivePort", ".*/DevToolsActivePort"} {
+		found, err := filepath.Glob(filepath.Join(baseDir, glob))
+		if err == nil {
+			files = append(files, found...)
 		}
 	}
-
-	for _, c := range candidates {
-		f, err := os.Stat(c)
-		if err != nil {
-			continue
+	sort.Slice(files, func(i, j int) bool { return modTime(files[i]).After(modTime(files[j])) })
+	for _, f := range files {
+		if port, ok := portFrom(f); ok {
+			return fmt.Sprintf("127.0.0.1:%d", port)
 		}
-		if !f.IsDir() {
-			continue
-		}
-		portFile := filepath.Join(c, "DevToolsActivePort")
-		data, err := os.ReadFile(portFile)
-		if err != nil {
-			continue
-		}
-		lines := strings.Split(string(data), "\n")
-		if len(lines) == 0 {
-			continue
-		}
-		port, err := strconv.Atoi(lines[0])
-		if err != nil {
-			continue
-		}
-		return fmt.Sprintf("127.0.0.1:%d", port)
 	}
 	return defaultDevtoolsHost
+}
+
+func portFrom(path string) (int, bool) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return 0, false
+	}
+	lines := strings.Split(string(data), "\n")
+	if len(lines) == 0 {
+		return 0, false
+	}
+	port, err := strconv.Atoi(strings.TrimSpace(lines[0]))
+	if err != nil {
+		return 0, false
+	}
+	return port, true
+}
+
+func modTime(path string) time.Time {
+	info, err := os.Stat(path)
+	if err != nil {
+		return time.Time{}
+	}
+	return info.ModTime()
 }

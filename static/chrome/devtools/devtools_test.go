@@ -185,3 +185,44 @@ func TestDetectDevtoolsHostProfileDir(t *testing.T) {
 	t.Setenv("BROWSER_PROFILE_DIR", profilePath)
 	AssertThat(t, detectDevtoolsHost(name), EqualTo{"127.0.0.1:12345"})
 }
+
+func TestDetectsAnyVendorProfileDir(t *testing.T) {
+	// Each fork names its profile directory differently: Edge uses
+	// com.microsoft.Edge.scoped_dir.*, Brave writes into the session dir.
+	for _, dir := range []string{
+		"com.microsoft.Edge.scoped_dir.1A80RU",
+		"com.brave.Browser.scoped_dir.XYZ",
+		".org.chromium.Chromium.abc",
+		"ws-42",
+	} {
+		base := t.TempDir()
+		profile := filepath.Join(base, dir)
+		if err := os.MkdirAll(profile, 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(profile, "DevToolsActivePort"),
+			[]byte("35439\n/devtools/browser/x"), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if got := detectDevtoolsHost(base); got != "127.0.0.1:35439" {
+			t.Errorf("%s: got %s", dir, got)
+		}
+	}
+}
+
+func TestPrefersTheNewestPortFile(t *testing.T) {
+	base := t.TempDir()
+	for name, port := range map[string]string{"old-profile": "1111", "new-profile": "2222"} {
+		p := filepath.Join(base, name)
+		_ = os.MkdirAll(p, 0755)
+		_ = os.WriteFile(filepath.Join(p, "DevToolsActivePort"), []byte(port+"\n/x"), 0644)
+	}
+	stale := filepath.Join(base, "old-profile", "DevToolsActivePort")
+	old := time.Now().Add(-time.Hour)
+	if err := os.Chtimes(stale, old, old); err != nil {
+		t.Fatal(err)
+	}
+	if got := detectDevtoolsHost(base); got != "127.0.0.1:2222" {
+		t.Fatalf("a stale port file must not win: %s", got)
+	}
+}
