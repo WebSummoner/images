@@ -142,7 +142,7 @@ func TestDevtools(t *testing.T) {
 	defer browserConn.Close()
 
 	browserClient := cdp.NewClient(browserConn)
-	targets, err := browserClient.Target.GetTargets(ctx)
+	targets, err := browserClient.Target.GetTargets(ctx, nil)
 	AssertThat(t, err, Is{nil})
 	AssertThat(t, len(targets.TargetInfos), EqualTo{2})
 
