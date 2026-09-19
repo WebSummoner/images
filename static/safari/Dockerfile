@@ -15,7 +15,7 @@ RUN \
     sed -i 's|    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(view), NULL);|    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(view), NULL);\n    webkit_settings_set_media_playback_requires_user_gesture(webkit_web_view_get_settings(view), FALSE);|' /webkit/Tools/MiniBrowser/gtk/BrowserTab.c && \
     cd /webkit && \
     yes | DEBIAN_FRONTEND=noninteractive Tools/gtk/install-dependencies && \
-    cmake -DPORT=GTK -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/webkit -DUSE_WPE_RENDERER=OFF -DENABLE_MINIBROWSER=ON -DENABLE_BUBBLEWRAP_SANDBOX=OFF -DENABLE_GAMEPAD=OFF -DENABLE_SPELLCHECK=OFF -DENABLE_WAYLAND_TARGET=OFF -DUSE_OPENJPEG=OFF -DUSE_LIBBACKTRACE=OFF -GNinja && \
+    cmake -DPORT=GTK -DCMAKE_BUILD_TYPE=Release -DENABLE_WEBDRIVER_BIDI=ON -DCMAKE_INSTALL_PREFIX=/opt/webkit -DUSE_WPE_RENDERER=OFF -DENABLE_MINIBROWSER=ON -DENABLE_BUBBLEWRAP_SANDBOX=OFF -DENABLE_GAMEPAD=OFF -DENABLE_SPELLCHECK=OFF -DENABLE_WAYLAND_TARGET=OFF -DUSE_OPENJPEG=OFF -DUSE_LIBBACKTRACE=OFF -GNinja && \
     ninja && \
     ninja install && \
     rm -Rf /var/lib/apt/lists/*
