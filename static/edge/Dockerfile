@@ -1,6 +1,10 @@
 ARG VERSION=latest
 FROM websummoner/dev_edge:$VERSION
 
+ARG VERSION
+LABEL org.websummoner.browser=edge \
+      org.websummoner.version=$VERSION
+
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 COPY msedgedriver /usr/bin/
 COPY entrypoint.sh /

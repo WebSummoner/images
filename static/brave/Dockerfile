@@ -14,6 +14,10 @@ RUN \
 ARG VERSION=latest
 FROM websummoner/dev_brave:$VERSION
 
+ARG VERSION
+LABEL org.websummoner.browser=brave \
+      org.websummoner.version=$VERSION
+
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
 COPY --from=go /devtools/devtools /usr/bin/
 COPY policies.json /etc/brave/policies/managed/

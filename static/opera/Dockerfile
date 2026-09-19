@@ -1,6 +1,10 @@
 ARG VERSION=latest
 FROM websummoner/dev_opera:$VERSION
 
+ARG VERSION
+LABEL org.websummoner.browser=opera \
+      org.websummoner.version=$VERSION
+
 COPY operadriver_linux64/operadriver /usr/bin/
 COPY entrypoint.sh /
 

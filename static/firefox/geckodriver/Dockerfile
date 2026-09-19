@@ -1,6 +1,10 @@
 ARG VERSION=latest
 FROM websummoner/dev_firefox:$VERSION
 
+ARG VERSION
+LABEL org.websummoner.browser=firefox \
+      org.websummoner.version=$VERSION
+
 COPY geckodriver /usr/bin/
 COPY entrypoint.sh /
 
