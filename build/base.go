@@ -116,11 +116,27 @@ func NewImage(srcDir string, destDir string, req Requirements) (*Image, error) {
 		return nil, fmt.Errorf("copy source files: %v", err)
 	}
 
+	if err := copySharedFiles(dir); err != nil {
+		return nil, fmt.Errorf("copy shared files: %v", err)
+	}
+
 	if len(req.Tags) == 0 {
 		return nil, errors.New("image tag is required")
 	}
 	return &Image{Dir: dir, Requirements: req}, nil
 }
+
+// ExportContext assembles a build context on disk, for tests and tooling.
+func ExportContext(srcDir, destDir string) (string, error) {
+	dir, err := copySourceFiles(srcDir, destDir)
+	if err != nil {
+		return "", err
+	}
+	return dir, copySharedFiles(dir)
+}
+
+// sharedSourceDir holds files copied into every build context.
+const sharedSourceDir = "_shared"
 
 func requireCommand(cmd string) bool {
 	_, err := exec.LookPath(cmd)
@@ -180,6 +196,38 @@ func copySourceFiles(srcDir string, destDir string) (string, error) {
 	}
 
 	return filepath.Join(destDir, srcDir), nil
+}
+
+// copySharedFiles adds static/_shared/* to a build context. A Dockerfile cannot
+// COPY from outside its context, so anything several images need is copied in
+// rather than duplicated per browser.
+func copySharedFiles(contextDir string) error {
+	sharedDir := filepath.Join("static", sharedSourceDir)
+	if !fileExists(sharedDir) {
+		return nil
+	}
+	return filepath.WalkDir(sharedDir, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		relativePath, err := filepath.Rel(sharedDir, p)
+		if err != nil {
+			return err
+		}
+		outputPath := filepath.Join(contextDir, relativePath)
+		if d.IsDir() {
+			return os.MkdirAll(outputPath, 0755)
+		}
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		info, err := d.Info()
+		if err != nil {
+			return err
+		}
+		return os.WriteFile(outputPath, data, info.Mode().Perm())
+	})
 }
 
 func (i *Image) Build() error {
