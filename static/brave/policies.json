@@ -1,3 +1,4 @@
 {
-  "ComponentUpdatesEnabled": false
+  "ComponentUpdatesEnabled": false,
+  "DownloadDirectory": "/home/selenium/Downloads"
 }

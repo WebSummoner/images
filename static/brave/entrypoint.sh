@@ -60,7 +60,8 @@ if env | grep -q CH_POLICY_; then
   done
 fi
 
-/usr/bin/fileserver &
+# Brave runs as root, so HOME would point the file server at /root.
+HOME=/home/selenium /usr/bin/fileserver &
 FILESERVER_PID=$!
 
 /usr/bin/devtools &
