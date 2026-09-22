@@ -18,6 +18,7 @@ ARG VERSION
 LABEL org.websummoner.browser=opera \
       org.websummoner.version=$VERSION
 
+COPY --from=go /devtools/devtools /usr/bin/
 COPY operadriver_linux64/operadriver /usr/bin/
 COPY entrypoint.sh /
 

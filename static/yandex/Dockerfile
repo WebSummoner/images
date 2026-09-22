@@ -18,6 +18,7 @@ ARG VERSION
 LABEL org.websummoner.browser=yandex \
       org.websummoner.version=$VERSION
 
+COPY --from=go /devtools/devtools /usr/bin/
 COPY yandexdriver /usr/bin/
 COPY entrypoint.sh /
 

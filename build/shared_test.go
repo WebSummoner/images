@@ -3,6 +3,7 @@ package build
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -60,5 +61,26 @@ func TestSharedCopyIsIdenticalToSource(t *testing.T) {
 	}
 	if string(got) != string(want) {
 		t.Error("the context copy differs from static/_shared")
+	}
+}
+
+// Compiling the helper is not enough: the final stage must ship it too.
+func TestEveryDevtoolsImageShipsTheBinary(t *testing.T) {
+	fromRepoRoot(t)
+	for _, browser := range []string{"chrome", "brave", "edge", "opera", "yandex"} {
+		entrypoint, err := os.ReadFile(filepath.Join("static", browser, "entrypoint.sh"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(string(entrypoint), "/usr/bin/devtools") {
+			continue
+		}
+		dockerfile, err := os.ReadFile(filepath.Join("static", browser, "Dockerfile"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(string(dockerfile), "COPY --from=go /devtools/devtools /usr/bin/") {
+			t.Errorf("%s: entrypoint starts devtools but the image never copies it", browser)
+		}
 	}
 }
