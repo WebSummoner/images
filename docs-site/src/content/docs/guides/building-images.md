@@ -71,7 +71,7 @@ Omit `-d` (or pass `latest`) to take the newest matching geckodriver.
 
 Do not pass `-d` for Opera. `operachromiumdriver` tags follow the Chromium
 version Opera is built on, not Opera's own line, so the tool resolves it — see
-[Opera](https://websummoner.riadvice.com/websummoner/reference/browser-images/#opera).
+[Opera](https://websummoner.riadvice.com/websummoner/reference/browser-notes/#opera).
 
 ### Yandex Browser
 

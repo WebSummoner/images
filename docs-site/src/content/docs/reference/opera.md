@@ -39,7 +39,7 @@ The current image needs no fallback — OperaDriver 151.0.7922.176 matches the
 Chromium line Opera 135 is built from.
 
 Two more behaviours show through to tests, documented on the hub's
-[Opera section](https://websummoner.riadvice.com/websummoner/reference/browser-images/#opera):
+[Opera section](https://websummoner.riadvice.com/websummoner/reference/browser-notes/#opera):
 operadriver answers in legacy JSONWP unless asked for W3C (the hub asks), and a
 fresh session reports Opera's own UI pages as extra window handles.
 
