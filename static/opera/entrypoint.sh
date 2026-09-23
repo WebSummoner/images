@@ -89,6 +89,7 @@ done
 if [ "$ENABLE_VNC" == "true" ]; then
     x11vnc -display "$DISPLAY" -passwd websummoner -shared -forever -loop500 -rfbport 5900 -rfbportv6 5900 -logfile /dev/null &
     X11VNC_PID=$!
+    for _ in $(seq 100); do (exec 3<>/dev/tcp/127.0.0.1/5900) 2>/dev/null && break; sleep 0.1; done
 fi
 
 DISPLAY="$DISPLAY" /usr/bin/operadriver --port=4444 --whitelisted-ips='' ${DRIVER_ARGS} &
